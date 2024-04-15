@@ -8,7 +8,7 @@ namespace ClassSchedule.Controllers
     {
         private readonly IRepository<Class> _classRepository;
         private readonly IRepository<Day> _dayRepository;
-        private readonly IRepository<Teacher> _teacherRepository;
+        private readonly IRepository<Teacher> _teacherRepository; 
 
         public ClassController(IRepository<Class> classRepository, IRepository<Day> dayRepository, IRepository<Teacher> teacherRepository)
         {

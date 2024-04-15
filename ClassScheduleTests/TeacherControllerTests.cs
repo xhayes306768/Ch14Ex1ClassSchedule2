@@ -40,7 +40,7 @@ namespace ClassScheduleTests
             var mockRepository = new Mock<IRepository<Teacher>>();
 
             // Setup mock repository 
-            var expectedTeachers = new List<Teacher> 
+            var expectedTeachers = new List<Teacher>  
             {
                 new Teacher { TeacherId = 1, FirstName = "John ", LastName = "Doe" },
                 new Teacher { TeacherId = 2, FirstName = "Jane", LastName = "Smith" }

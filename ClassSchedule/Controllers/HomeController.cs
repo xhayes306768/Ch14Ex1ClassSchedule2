@@ -37,7 +37,7 @@ namespace ClassSchedule.Controllers
                 Includes = "Teacher, Day"
             };
 
-            // order by day if no day id. Otherwise, filter by day and order by time.
+            
             if (id == 0)
             {
                 classOptions.OrderBy = c => c.DayId;
@@ -48,7 +48,7 @@ namespace ClassSchedule.Controllers
                 classOptions.OrderBy = c => c.MilitaryTime;
             }
 
-            // execute queries
+            
             ViewBag.Days = _dayRepository.List(dayOptions);
             return View(_classRepository.List(classOptions));
         }

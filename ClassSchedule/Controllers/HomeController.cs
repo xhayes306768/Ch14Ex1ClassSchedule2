@@ -19,7 +19,7 @@ namespace ClassSchedule.Controllers
 
         public ViewResult Index(int id)
         {
-            // if day id passed to action method, store in session
+          
             if (id > 0)
             {
                 HttpContext.Session.SetInt32("dayid", id);

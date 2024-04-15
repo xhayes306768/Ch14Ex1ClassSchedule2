@@ -16,5 +16,21 @@ namespace ClassSchedule
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        public interface IRepository<T>
+        {
+            // Define repository methods here
+        }
+
+        public class Repository<T> : IRepository<T>
+        {
+            // Implement repository methods here
+        }
+
+
+
+
+
+
     }
 }

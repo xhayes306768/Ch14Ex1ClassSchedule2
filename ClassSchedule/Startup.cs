@@ -25,6 +25,16 @@ namespace ClassSchedule
 
             services.AddDbContext<ClassScheduleContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ClassScheduleContext")));
+
+            //repository t with scpoped lifetime
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddScoped<IRepository<Class>, Repository<Class>>();
+            services.AddScoped<IRepository<Day>, Repository<Day>>();
+            services.AddScoped<IRepository<Teacher>, Repository<Teacher>>();
+
+
+
         }
 
         // Use this method to configure the HTTP request pipeline.

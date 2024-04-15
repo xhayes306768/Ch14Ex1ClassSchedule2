@@ -5,6 +5,14 @@ namespace ClassSchedule.Controllers
 {
     public class TeacherController : Controller
     {
+
+        private readonly IRepository<Teacher> _teacherRepository;
+
+        public TeacherController(IRepository<Teacher> teacherRepository)
+        {
+            _teacherRepository = teacherRepository;
+        }
+
         private Repository<Teacher> teachers { get; set; }
         public TeacherController(ClassScheduleContext ctx) => teachers = new Repository<Teacher>(ctx);
 

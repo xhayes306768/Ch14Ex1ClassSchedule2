@@ -6,31 +6,36 @@ namespace ClassSchedule.Controllers
 {
     public class ClassController : Controller
     {
-        private ClassScheduleUnitOfWork data { get; set; }
-        public ClassController(ClassScheduleContext ctx)
+        private readonly IRepository<Class> _classRepository;
+        private readonly IRepository<Day> _dayRepository;
+        private readonly IRepository<Teacher> _teacherRepository;
+
+        public ClassController(IRepository<Class> classRepository, IRepository<Day> dayRepository, IRepository<Teacher> teacherRepository)
         {
-            data = new ClassScheduleUnitOfWork(ctx);
+            _classRepository = classRepository;
+            _dayRepository = dayRepository;
+            _teacherRepository = teacherRepository;
         }
 
-        public RedirectToActionResult Index() 
+        public RedirectToActionResult Index()
         {
-            // clear session and navigate to list of classes
+            // Clear session and navigate to list of classes
             HttpContext.Session.Remove("dayid");
-            return RedirectToAction("Index", "Home"); 
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public ViewResult Add()
         {
-            this.LoadViewBag("Add");
+            LoadViewBag("Add");
             return View();
         }
 
         [HttpGet]
         public ViewResult Edit(int id)
         {
-            this.LoadViewBag("Edit");
-            var c = this.GetClass(id);
+            LoadViewBag("Edit");
+            var c = _classRepository.Get(id);
             return View("Add", c);
         }
 
@@ -38,20 +43,22 @@ namespace ClassSchedule.Controllers
         public IActionResult Add(Class c)
         {
             string operation = (c.ClassId == 0) ? "Add" : "Edit";
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 if (c.ClassId == 0)
-                    data.Classes.Insert(c);
+                    _classRepository.Insert(c);
                 else
-                    data.Classes.Update(c);
-                data.Classes.Save();
+                    _classRepository.Update(c);
+                _classRepository.Save();
 
                 string verb = (operation == "Add") ? "added" : "updated";
                 TempData["msg"] = $"{c.Title} {verb}";
 
-                return this.GoToClasses();
+                return GoToClasses();
             }
-            else {
-                this.LoadViewBag(operation);
+            else
+            {
+                LoadViewBag(operation);
                 return View();
             }
         }
@@ -59,7 +66,7 @@ namespace ClassSchedule.Controllers
         [HttpGet]
         public ViewResult Delete(int id)
         {
-            var c = this.GetClass(id);
+            var c = _classRepository.Get(id);
             ViewBag.DayId = HttpContext.Session.GetInt32("dayid");
             return View(c);
         }
@@ -67,32 +74,24 @@ namespace ClassSchedule.Controllers
         [HttpPost]
         public RedirectToActionResult Delete(Class c)
         {
-            c = data.Classes.Get(c.ClassId); // so can get class title for notification message
-            
-            data.Classes.Delete(c);
-            data.Classes.Save();
+            c = _classRepository.Get(c.ClassId); // so can get class title for notification message
+            _classRepository.Delete(c);
+            _classRepository.Save();
 
             TempData["msg"] = $"{c.Title} deleted";
 
-            return this.GoToClasses();
+            return GoToClasses();
         }
 
         // private helper methods
-        private Class GetClass(int id)
-        {
-            var classOptions = new QueryOptions<Class> {
-                Includes = "Teacher, Day",
-                Where = c => c.ClassId == id
-            };
-            return data.Classes.Get(classOptions);
-        }
-
         private void LoadViewBag(string operation)
         {
-            ViewBag.Days = data.Days.List(new QueryOptions<Day> {
+            ViewBag.Days = _dayRepository.List(new QueryOptions<Day>
+            {
                 OrderBy = d => d.DayId
             });
-            ViewBag.Teachers = data.Teachers.List(new QueryOptions<Teacher> {
+            ViewBag.Teachers = _teacherRepository.List(new QueryOptions<Teacher>
+            {
                 OrderBy = t => t.LastName
             });
 
@@ -109,4 +108,5 @@ namespace ClassSchedule.Controllers
                 return RedirectToAction("Index", "Home");
         }
     }
+
 }
